@@ -1,0 +1,99 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Páginas{% endblock %}
+{% block content %}
+{% include 'pages/includes/pages_menu.html' %}
+<main role="main" class="mt-5">
+<!-- barra de busqueda -->
+<div class="container">
+    <div class="row">
+    <div class="col-md-12 search">
+        <form method="POST" action="buscar/">
+        {% csrf_token %}
+        <div id="custom-search-input">
+            <div class="input-group col-md-12">
+            <input class="form-control text" name="buscalo" type="text" placeholder="Buscar..." aria-label="Search" name="buscar">
+            <button class="btn btn-outline-success ml-2 boton" type="submit">Search</button>
+            </div>
+        </div>
+        </form>
+    </div>
+    </div>
+</div>
+<!-- fin barra de busqueda -->
+<div class="table-responsive">
+    <table class="table">
+    <div class="container">
+        <div class="row">
+        <div class="col-lg-1 mt-1" style="margin-left: 0px !important;">                            
+            <a href="{% url 'pages:reporte_pdf' %}" class="btn btn-info btn-block">
+                <span class="glyphicon glyphicon-file">PDF</span>
+            </a>                          
+        </div>
+        <div class="row col-lg-1 mt-1" style="margin-left: 0px !important;">                            
+            <a id="crear_detalle" href="{% url 'pages:reporte_excel' %}" class="btn btn-info btn-block">
+                <span class="glyphicon glyphicon-file">EXCEL</span>
+            </a>                          
+        </div>
+        </div>
+    </div>
+
+    <thead>
+        <tr>
+        <th scope="col">#</th>
+        <th scope="col">Producto</th>
+        <th scope="col">Detalle</th>
+        <th scope="col">UND</th>
+        <th scope="col">KG</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if page %}
+            {% for page in pages %}
+            <tr>
+                <th scope="row">{{page.id}}</th>
+                <td>{{page.title}}</td>
+                <td>{{page.content|striptags|safe|truncatechars:"200"}}</td>
+                <td>{{page.order}}</td>
+                <td>{{page.cimal|floatformat:2}}</td>
+                <td>
+                {% if request.user.is_staff %}
+                    <a href="{% url 'pages:update' page.id %}">Editar</a><span>|</span>
+                    <a href="{% url 'pages:delete' page.id %}">Borrar</a>
+                {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+    </table>
+</div>
+</main>
+{% endblock %}
+{% block js %}
+<script>
+  $(document).ready(function() 
+  {   
+    var table = $('#tabla').DataTable({
+        "language": {
+            url: "/static/localizacion/es_ES.json"
+        }
+    });
+
+    $('#tabla tbody').on('click','tr',function() 
+    {
+      if ($(this).hasClass('selected')) 
+        {           
+          $(this).removeClass('selected');
+            
+        }
+      else 
+        {
+          table.$('tr.selected').removeClass('selected');
+          $(this).addClass('selected');                      
+        }
+    });   
+      
+  });
+</script>
+{% endblock js %}
