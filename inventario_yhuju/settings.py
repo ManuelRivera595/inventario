@@ -126,4 +126,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #auth redirect
 LOGIN_REDIRECT_URL = 'pages:pages'
-LOGOUT_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'index'
